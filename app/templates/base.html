@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <title>RoWordNet Editor</title>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fonts.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/default.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/form.css') }}">
+    </head>
+
+    <body>
+        <div id="header-wrapper">
+            <div id="header" class="container">
+                <div id="logo">
+                    <h1>
+                        <a href="#">RoWordNet Editor</a>
+                    </h1>
+                </div>
+
+                {% if 'login' not in url_for(request.endpoint) %}
+                    <div id = "menu">
+                        <ul>
+                            {% if 'leaf_synsets' in url_for(request.endpoint) %}
+                                <li  class="active"><a href="/leaf_synsets">Homepage</a></li>
+                            {% else %}
+                                <li><a href="/leaf_synsets">Homepage</a></li>
+                            {% endif %}
+
+                            {% if 'requested_synsets' in url_for(request.endpoint) %}
+                                <li  class="active"><a href="/requested_synsets">Requested synsets</a></li>
+                            {% else %}
+                                <li><a href="/requested_synsets">Requested synsets</a></li>
+                            {% endif %}
+
+                            <li><a href="/logout">Logout</a> </li>
+                        </ul>
+                     </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <div class="wrapper">
+            {% block content %}
+
+            {% endblock %}
+        </div>
+    </body>
+</html>

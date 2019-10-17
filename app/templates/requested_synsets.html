@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% for synset in requested_synsets %}
+        {% if loop.index0 % 3 == 0 %}
+            <div id="three-column{{loop.index0}}" class="container">
+        {% endif %}
+
+            <div id="tbox{{loop.index0}}">
+                <div class = "title">
+                    <h2>{{synset.id}}</h2>
+                </div>
+
+                <div class="container">
+                    <strong>Definition: </strong>
+                    <ul>
+                        <li>{{synset.definition}}</li>
+                    </ul>
+
+                    {% if not synset.nonlexicalized %}
+
+                        <strong>Lemmas:</strong>
+                       <ul>
+                            {% for lemma in requested_lemmas %}
+                                {% if lemma.synset_id == synset.id %}
+                                    <li>
+                                        {{lemma.name}} - {{lemma.sense}}
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <strong>Nonlexicalized: </strong> True
+                        <br><br>
+                    {% endif %}
+
+                    <strong>Created by:</strong> {{synset.stamp}}
+                </div>
+
+                <form action="" method="post">
+                    <ul class="form-style-1">
+                        <li>
+                            <input type="button" onclick="location.href='/requested_synsets/accept_synset?synset_id={{synset.id}}';" value="Accept" />
+                            <input type="button" onclick="location.href='/requested_synsets/reject_synset?synset_id={{synset.id}}';" value="Reject" />
+                        </li>
+                    </ul>
+                </form>
+
+            </div>
+        {% if loop.index0 % 3 == 2 %}
+            </div>
+        {% endif %}
+
+    {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div id="welcome" class="container">
+        <div class="title">
+            <h2>Welcome to RoWordNet Editor</h2>
+        </div>
+
+        <p>Please select one of the following synsets found in English WordNet to add it in Romanian WordNet:</p>
+    </div>
+
+        {% for synset_id in leaf_synsets_id %}
+            {% if loop.index0 % 3 == 0 %}
+                <div id="three-column{{loop.index0}}" class="container">
+            {% endif %}
+
+            <div id="tbox{{loop.index0}}">
+                <div class = "title">
+                    <h2><a href="/create_synset?synset_id={{synset_id}}">{{synset_id}}</a></h2>
+                </div>
+
+                <p>
+                    <strong>Definition: </strong>
+                    <ul>
+                        <li>{{leaf_definition[synset_id]}}</li>
+                    </ul>
+
+                    <strong>Lemmas:</strong>
+                    <ul>
+                        {% for (lemma, sense) in leaf_lemmas[synset_id] %}
+                            <li>{{lemma}} - {{sense}}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <strong>Relations</strong>:
+                    <ul>
+                        {% for key, value in leaf_relations[synset_id].items() %}
+                            <li>
+                                <strong>{{key}}</strong> <strong>({{value}})</strong>: {{leaf_relations_definition[synset_id][key]}}.
+                                Lemmas:
+                                {% for (lemma, sense) in leaf_relations_lemmas[synset_id][key] %}
+                                    {% if loop.index0 == leaf_relations_lemmas[synset_id][key]|length - 1 %}
+                                        {{lemma}} - {{sense}}.
+                                    {% else %}
+                                        {{lemma}} - {{sense}},
+                                    {% endif %}
+                                {% endfor %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </p>
+
+            </div>
+            {% if loop.index0 % 3 == 2 %}
+                </div>
+            {% endif %}
+
+        {% endfor %}
+
+{% endblock %}
