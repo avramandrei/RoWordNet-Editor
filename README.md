@@ -2,13 +2,9 @@
 
 This project provieds a graphical interface for editing the Romanian WordNet. For more information about it, please read the original [paper]().
 
-## Requirements
-
-The projects requires `Python>=3.5` and `pip` to be installed in the system.
-
 ## Installation
  
-To install the application, run the following commands:
+The projects requires `Python>=3.5`. To install the application, run the following commands:
 
 ```
 git clone https://github.com/avramandrei/RoWordNet-Editor.git
