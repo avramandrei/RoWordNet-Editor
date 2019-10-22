@@ -1,0 +1,6 @@
+lxml
+networkx
+flask
+nltk
+flask_login
+python-dotenv
