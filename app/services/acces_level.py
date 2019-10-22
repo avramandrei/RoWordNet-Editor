@@ -1,6 +1,6 @@
 from functools import wraps
 from flask import url_for, request, redirect, session
-from app.services.models import users
+from app.services.model import users
 import flask_login
 
 access_levels = {

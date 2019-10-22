@@ -1,6 +1,6 @@
 from flask_login import LoginManager
 from app import app
-from app.services.models import users
+from app.services.model import users
 from flask import flash, redirect, url_for
 
 

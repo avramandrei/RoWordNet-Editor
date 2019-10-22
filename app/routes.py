@@ -2,7 +2,7 @@ from app import app
 from flask import render_template
 from app.services.synsets import get_leaf_synsets, remove_requested_synsets, add_synset_to_rowordnet, get_synset_relations, save_synsets, save_lemmas
 from flask import request, redirect, url_for
-from app.services.models import users, req_synsets, req_lemmas, Synset, Lemma
+from app.services.model import users, req_synsets, req_lemmas, Synset, Lemma
 import flask
 import flask_login
 from app.services.acces_level import requires_access_level, access_levels

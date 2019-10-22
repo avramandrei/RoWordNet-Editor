@@ -1,4 +1,4 @@
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 import os
 import pickle
 
@@ -59,6 +59,7 @@ class User:
     def verify_password(self, password):
         return check_password_hash(self.password, password)
 
+
 try:
     with open(os.path.join("app", "resources", "synsets.pickle"), "rb") as file:
         req_synsets = pickle.load(file)
@@ -71,16 +72,10 @@ try:
 except FileNotFoundError:
     req_lemmas = []
 
-users = [
-    User(1, "verginica.barbu",
-         "pbkdf2:sha256:150000$XhoGbp8C$c13ca840c685b5971eded007c858180dc99d4b183a8464a756dc67ae08a8df67",
-         False, 2, "Verginica", "Barbu"),
+try:
+    with open(os.path.join("app", "resources", "users.pickle"), "rb") as file:
+        users = pickle.load(file)
+except FileNotFoundError:
+    users = []
 
-    User(2, "andrei.avram",
-         "pbkdf2:sha256:150000$nDm04HBe$e499a69576ec5bd334e042a2d7488ada18234be06f15994bbb633c0298d15eef",
-         False, 0, "Andrei", "Avram"),
 
-    User(3, "admin.admin",
-         "pbkdf2:sha256:150000$BOJy8Ew0$152d4e56163f20fc0e1170368312203841223852f4fe2ec07845058c451f910d",
-         False, 2, "Admin", "Admin")
-]

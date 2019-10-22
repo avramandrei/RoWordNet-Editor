@@ -1,6 +1,6 @@
 from app import rown, enwn, ro_synsets, en_synsets
 from app.utils import en_synset_relations
-from app.services.models import req_synsets, req_lemmas
+from app.services.model import req_synsets, req_lemmas
 from rowordnet.synset import Synset as RoWNSynset
 from app.utils import pos_dict
 import os
