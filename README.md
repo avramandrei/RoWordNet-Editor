@@ -22,4 +22,19 @@ flask run
 
 The application can now be accesed from a browser at the IP and port specified in `.flaskenv` configuration file (default: `127.0.0.1:5000`). 
 
+## Add user
+
+The application comes with authentification/authorization mechanisms. By default, the application has only one user (username: `admin`, password: `admin`). To add another user, move to the project directory and run the following commands:
+
+```
+python3 add_user.py [username] [password] [role] [--firstname] [--lastname]
+```
+
+| Argument | Type | Mandatory | Description |
+| --- | --- | --- | --- |
+| username | str | yes | Name of the user. |
+| password | str | yes | Password of the user. | 
+| role | str | yes | Role of the user: `user`, `moderator` or `admin`. |
+| --firstname | str | no | Firstname of the user. Default: `""`. | 
+| --lastname | str | no | Lastname of the user. Default: `""`. |
 
