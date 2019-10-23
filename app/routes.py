@@ -133,25 +133,7 @@ def requested_synsets():
 def aceept_requested_synset():
     synset_id = request.args.get('synset_id')
 
-    for req_synset in req_synsets:
-        if req_synset.id == synset_id:
-            synset = req_synset
-            req_synsets.remove(req_synset)
-            break
-
-    lemmas = []
-
-    for req_lemma in req_lemmas:
-        if req_lemma.synset_id == synset_id:
-            lemmas.append(req_lemma)
-            req_lemmas.remove(req_lemma)
-
-    save_synsets()
-    save_lemmas()
-
-    relations = get_synset_relations(synset_id)
-
-    add_synset_to_rowordnet(synset, lemmas, relations)
+    add_synset_to_rowordnet(synset_id)
 
     return render_template("requested_synsets.html", requested_synsets=req_synsets,
                            requested_lemmas=req_lemmas)
@@ -179,7 +161,7 @@ def reject_requested_synset():
                            requested_lemmas=req_lemmas)
 
 
-@app.route('/requested_synsets/edit_synset')
+@app.route('/requested_synsets/edit_synset', methods=["GET", "POST"])
 @flask_login.login_required
 @requires_access_level(access_levels["moderator"])
 def edit_requested_synset():
@@ -200,6 +182,45 @@ def edit_requested_synset():
 
         return render_template("edit_synset.html", synset_id=synset_id, definition=definition,
                                nonlexicalized=nonlexicalized, stamp=stamp, lemmas=lemmas)
+    if request.method == "POST":
+        synset_id = request.form.get("synset_id")
+        definition = request.form.get("definition")
+        nonlexicalized = False if request.form.get("nonlexicalized") is None else True
+        stamp = request.form.get("stamp")
+        lemma_counter = request.form.get("lemma_counter")
+
+        for synset in req_synsets:
+            if synset.id == synset_id:
+                synset.definition = definition
+                synset.nonlexicalized = nonlexicalized
+                synset.stamp = stamp
+
+        for lemma in req_lemmas:
+            if synset_id == lemma.synset_id:
+                req_lemmas.remove(lemma)
+
+        for i in range(int(lemma_counter)):
+            name = request.form.get("lemma_{}_name".format(i))
+            sense = request.form.get("lemma_{}_sense".format(i))
+            lemma = Lemma(id=0, name=name, sense=sense, synset_id=synset_id)
+
+            req_lemmas.append(lemma)
+
+        add_synset_to_rowordnet(synset_id)
+
+        if not nonlexicalized:
+            lemma_counter = int(request.form.get("lemma_counter"))
+
+            for lemma_id in range(lemma_counter):
+                lemma_name = request.form.get("lemma_" + str(lemma_id) + "_name")
+                lemma_sense = request.form.get("lemma_" + str(lemma_id) + "_sense")
+
+                lemma = Lemma(id=req_lemmas[-1].id if len(req_lemmas) > 0 else 0,
+                              name=lemma_name, sense=lemma_sense, synset_id=synset_id)
+                req_lemmas.append(lemma)
+                save_lemmas()
+
+        return redirect(url_for('requested_synsets'))
 
 
 @app.route('/download_rowordnet')

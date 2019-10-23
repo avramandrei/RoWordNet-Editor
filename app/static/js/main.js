@@ -2,8 +2,10 @@ window.onload = function() {
     var ul = document.getElementById("create_synset_ul");
     ul.removeChild(ul.lastChild)
 
-    if (document.getElementById("lemmaCounter").value == null)
+    if (document.getElementById("lemmaCounter").value == "")
         document.getElementById("lemmaCounter").value = Number(0);
+
+    isLexicalized();
 }
 
 function isLexicalized() {
@@ -21,7 +23,7 @@ function isLexicalized() {
         plusLemma.disabled = false;
         minusLemma.disabled = false;
     }
-
+    lemma_counter = document.getElementById("lemmaCounter").value
 
     for(var i=0; i<lemma_counter; i++) {
         var text = document.getElementById("lemma_" + i + "_name");
@@ -73,9 +75,18 @@ function addLemmaFcn() {
 }
 
 function removeLemmaFcn() {
+    if(document.getElementById("lemmaCounter").value == 0)
+        return;
+
     var ul = document.getElementById("create_synset_ul");
     submit = ul.removeChild(ul.lastChild)
+
+    if(ul.lastChild.nodeName == "#text"){
+        ul.removeChild(ul.lastChild)
+    }
+
     ul.removeChild(ul.lastChild)
+
     ul.appendChild(submit)
 
     document.getElementById("lemmaCounter").value -=1

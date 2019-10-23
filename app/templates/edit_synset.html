@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="create_synset" method="post">
+    <form action="/requested_synsets/edit_synset" method="post">
         <ul class="form-style-1" id="create_synset_ul">
             <input type="hidden" name="lemma_counter" id="lemmaCounter" value="{{lemmas|length}}">
 
@@ -17,7 +17,11 @@
 
             <li>
                 <label>Nonlexicalized</label>
-                <input type="checkbox" name="nonlexicalized" onclick="isLexicalized()" value="{{nonlexicalized}}" id="nonlexicalized">
+                {% if nonlexicalized %}
+                    <input type="checkbox" name="nonlexicalized" onclick="isLexicalized()" id="nonlexicalized" checked>
+                {% else %}
+                    <input type="checkbox" name="nonlexicalized" onclick="isLexicalized()" id="nonlexicalized">
+                {% endif %}
             </li>
 
             <li>
@@ -39,7 +43,7 @@
                 </li>
             {% endfor %}
 
-            <li><input type='submit' name='submit' value="Create synset"/></li>
+            <li><input type='submit' name='submit' value="Save synset"/></li>
         </ul>
     </form>
 {% endblock %}

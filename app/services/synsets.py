@@ -70,14 +70,34 @@ def remove_requested_synsets(leaf_synset_ids):
     return leaf_synset_ids
 
 
-def add_synset_to_rowordnet(synset, lemmas, relations):
+def add_synset_to_rowordnet(synset_id):
+    for req_synset in req_synsets:
+        if req_synset.id == synset_id:
+            synset = req_synset
+            req_synsets.remove(req_synset)
+            break
+
+    lemmas = []
+
+    for req_lemma in req_lemmas:
+        if req_lemma.synset_id == synset_id:
+            lemmas.append(req_lemma)
+            req_lemmas.remove(req_lemma)
+
+    save_synsets()
+    save_lemmas()
+
     rown_synset = RoWNSynset(id=synset.id, pos=pos_dict[synset.id[-1]], nonlexicalized=synset.nonlexicalized,
                              stamp=synset.stamp, definition=synset.definition)
+
+    print(lemmas)
 
     for lemma in lemmas:
         rown_synset.add_literal(lemma.name, lemma.sense)
 
     rown.add_synset(rown_synset)
+
+    relations = get_synset_relations(synset_id)
 
     for rel_synset_id, relation in relations:
         rown.add_relation(synset.id, rel_synset_id, relation)

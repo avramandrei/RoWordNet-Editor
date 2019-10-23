@@ -30,7 +30,7 @@ class Lemma:
         self.synset_id = synset_id
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        return '<id {}, name {}, sense {} synset_id {}>'.format(self.id, self.name, self.sense, self.synset_id)
 
     def serialize(self):
         return {
