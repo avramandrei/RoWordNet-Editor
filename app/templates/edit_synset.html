@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="create_synset" method="post">
+        <ul class="form-style-1" id="create_synset_ul">
+            <input type="hidden" name="lemma_counter" id="lemmaCounter" value="{{lemmas|length}}">
+
+            <li>
+                <label>Synset id<span class="required">*</span></label>
+                <input type="text" name="synset_id" value="{{synset_id}}" class="field-long">
+            </li>
+
+            <li>
+                <label>Definition<span class="required">*</span></label>
+                <textarea name="definition" id="definition" class="field-long field-textarea">{{definition}}</textarea>
+            </li>
+
+            <li>
+                <label>Nonlexicalized</label>
+                <input type="checkbox" name="nonlexicalized" onclick="isLexicalized()" value="{{nonlexicalized}}" id="nonlexicalized">
+            </li>
+
+            <li>
+                <label>Stamp<span class="required">*</span></label>
+                <input type="text" name="stamp" value="{{stamp}}" class="field-long">
+            </li>
+
+            <li>
+                <label>Lemmas</label>
+
+                <button id="addLemma" onclick="addLemmaFcn()" type="button">Add Lemma</button>
+                <button id="removeLemma" onclick="removeLemmaFcn()" type="button">Remove Lemma</button>
+            </li>
+
+            {% for (name, sense) in lemmas %}
+                <li>
+                    <input type="text" name="lemma_{{loop.index0}}_name" id="lemma_{{loop.index0}}_name" value="{{name}}" class="field-divided">
+                    <input type="text" name="lemma_{{loop.index0}}_sense" id="lemma_{{loop.index0}}_sense" value="{{sense}}" class="field-divided">
+                </li>
+            {% endfor %}
+
+            <li><input type='submit' name='submit' value="Create synset"/></li>
+        </ul>
+    </form>
+{% endblock %}

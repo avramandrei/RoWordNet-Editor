@@ -1,11 +1,12 @@
-from app import app
-from flask import render_template
+from app import app, rown, en_synsets
+from flask import render_template, send_file
 from app.services.synsets import get_leaf_synsets, remove_requested_synsets, add_synset_to_rowordnet, get_synset_relations, save_synsets, save_lemmas
 from flask import request, redirect, url_for
 from app.services.model import users, req_synsets, req_lemmas, Synset, Lemma
 import flask
 import flask_login
 from app.services.acces_level import requires_access_level, access_levels
+import os
 
 
 @app.route('/leaf_synsets')
@@ -39,9 +40,14 @@ def create_synset():
                 firstname = user.firstname
                 lastname = user.lastname
 
+        en_definition = en_synsets[synset_id].definition()
+        en_lemmas = [(lemma.name(), en_synsets[synset_id].name().split(".")[2]) for lemma in en_synsets[synset_id].lemmas()]
+
         return render_template("create_synset.html",
                                synset_id=synset_id,
-                               stamp=lastname + " " + firstname
+                               stamp=lastname + " " + firstname,
+                               en_definition=en_definition,
+                               en_lemmas=en_lemmas
                                )
     if request.method == "POST":
         synset_id = request.form.get("synset_id")
@@ -171,4 +177,40 @@ def reject_requested_synset():
 
     return render_template("requested_synsets.html", requested_synsets=req_synsets,
                            requested_lemmas=req_lemmas)
+
+
+@app.route('/requested_synsets/edit_synset')
+@flask_login.login_required
+@requires_access_level(access_levels["moderator"])
+def edit_requested_synset():
+    if request.method == "GET":
+        synset_id = request.args.get("synset_id")
+
+        for synset in req_synsets:
+            if synset_id == synset.id:
+                definition = synset.definition
+                nonlexicalized = synset.nonlexicalized
+                stamp = synset.stamp
+
+        lemmas = []
+
+        for lemma in req_lemmas:
+            if lemma.synset_id == synset_id:
+                lemmas.append((lemma.name, lemma.sense))
+
+        return render_template("edit_synset.html", synset_id=synset_id, definition=definition,
+                               nonlexicalized=nonlexicalized, stamp=stamp, lemmas=lemmas)
+
+
+@app.route('/download_rowordnet')
+@flask_login.login_required
+@requires_access_level(access_levels["moderator"])
+def download_rowordnet():
+    rown.save(os.path.join("rowordnet", "rowordnet.xml"), xml=True)
+
+    rowordnet_path = os.path.join("..", "rowordnet", "rowordnet.xml")
+
+    return send_file(rowordnet_path, as_attachment=True)
+
+
 

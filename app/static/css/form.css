@@ -1,13 +1,8 @@
 .form-style-1 {
-	margin:50px auto;
+	margin:40px auto;
 	max-width: 400px;
 	padding: 20px 12px 10px 20px;
 	font: 13px "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-}
-
-[id^="three-column"] .form-style-1 {
-    margin:0px;
-    margin-bottom: 15px;
 }
 
 [id^="three-column"] .container {

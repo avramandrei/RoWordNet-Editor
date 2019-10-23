@@ -1,11 +1,12 @@
 from flask import Flask
 from app.utils import en_synset_to_id
+import os
 
 print()
 
 print("Loading the Romanian WordNet...")
 from rowordnet import RoWordNet
-rown = RoWordNet("rowordnet/rowordnet.pickle")
+rown = RoWordNet(os.path.join("rowordnet", "rowordnet.pickle"))
 ro_synsets = {synset_id: rown.synset(synset_id) for synset_id in rown.synsets()}
 
 print("Loading the English WordNet...")

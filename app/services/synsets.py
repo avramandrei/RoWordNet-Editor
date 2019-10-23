@@ -63,10 +63,7 @@ def get_leaf_synsets():
 
 
 def remove_requested_synsets(leaf_synset_ids):
-
-    req_synset_ids = [synset.id for synset in req_synsets]
-
-    req_synset_ids = set(req_synset_id[0] for req_synset_id in req_synset_ids)
+    req_synset_ids = set(synset.id for synset in req_synsets)
 
     leaf_synset_ids = leaf_synset_ids - leaf_synset_ids.intersection(req_synset_ids)
 
