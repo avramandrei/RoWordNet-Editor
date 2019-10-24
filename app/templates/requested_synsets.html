@@ -19,7 +19,7 @@
 
                 {% if not synset.nonlexicalized %}
 
-                    <strong>Lemmas:</strong>
+                    <strong>Lemmas:</strong> <br><br>
                    <ul>
                         {% for lemma in requested_lemmas %}
                             {% if lemma.synset_id == synset.id %}
