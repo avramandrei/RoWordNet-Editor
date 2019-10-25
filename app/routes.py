@@ -180,8 +180,13 @@ def edit_requested_synset():
             if lemma.synset_id == synset_id:
                 lemmas.append((lemma.name, lemma.sense))
 
+        en_definition = en_synsets[synset_id].definition()
+        en_lemmas = [(lemma.name(), en_synsets[synset_id].name().split(".")[2]) for lemma in
+                     en_synsets[synset_id].lemmas()]
+
         return render_template("edit_synset.html", synset_id=synset_id, definition=definition,
-                               nonlexicalized=nonlexicalized, stamp=stamp, lemmas=lemmas)
+                               nonlexicalized=nonlexicalized, stamp=stamp, lemmas=lemmas, en_definition=en_definition,
+                               en_lemmas=en_lemmas)
     if request.method == "POST":
         synset_id = request.form.get("synset_id")
         definition = request.form.get("definition")

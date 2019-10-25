@@ -1,6 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <div id="three-column0" class="container">
+        <div id="synset-info">
+            <b>English definition:</b> {{en_definition}}
+
+            <br><br>
+
+            <b>English lemmas: </b>
+            {% for (name, sense) in en_lemmas %}
+                {% if loop.index0 == en_lemmas|length - 1 %}
+                    {{name}} - {{sense}}
+                {% else %}
+                    {{name}} - {{sense}},
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
     <form action="/requested_synsets/edit_synset" method="post">
         <ul class="form-style-1" id="create_synset_ul">
             <input type="hidden" name="lemma_counter" id="lemmaCounter" value="{{lemmas|length}}">
