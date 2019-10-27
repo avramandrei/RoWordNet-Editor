@@ -70,6 +70,19 @@ def remove_requested_synsets(leaf_synset_ids):
     return leaf_synset_ids
 
 
+def remove_lemmas_from_req_lemmas(synset_id):
+    length = len(req_lemmas)
+    i = 0
+
+    while i < length:
+        if req_lemmas[i].synset_id == synset_id:
+            del req_lemmas[i]
+            i -= 1
+            length -= 1
+
+        i += 1
+
+
 def add_synset_to_rowordnet(synset_id):
     for req_synset in req_synsets:
         if req_synset.id == synset_id:
@@ -77,45 +90,67 @@ def add_synset_to_rowordnet(synset_id):
             req_synsets.remove(req_synset)
             break
 
-    lemmas = []
-
-    for req_lemma in req_lemmas:
-        if req_lemma.synset_id == synset_id:
-            lemmas.append(req_lemma)
-            req_lemmas.remove(req_lemma)
-
     save_synsets()
-    save_lemmas()
 
     rown_synset = RoWNSynset(id=synset.id, pos=pos_dict[synset.id[-1]], nonlexicalized=synset.nonlexicalized,
                              stamp=synset.stamp, definition=synset.definition)
 
-    print(lemmas)
+    for req_lemma in req_lemmas:
+        if req_lemma.synset_id == synset_id:
+            rown_synset.add_literal(req_lemma.name, req_lemma.sense)
 
-    for lemma in lemmas:
-        rown_synset.add_literal(lemma.name, lemma.sense)
+    remove_lemmas_from_req_lemmas(synset_id)
+
+    save_lemmas()
 
     rown.add_synset(rown_synset)
 
-    relations = get_synset_relations(synset_id)
+    outbound_relations, inbound_relations = get_synset_relations(synset_id)
 
-    for rel_synset_id, relation in relations:
+    print(outbound_relations)
+    print(inbound_relations)
+
+    for rel_synset_id, relation in outbound_relations:
         rown.add_relation(synset.id, rel_synset_id, relation)
 
+    for rel_synset_id, relation in inbound_relations:
+        rown.add_relation(rel_synset_id, synset.id, relation)
+
+    print("New synset added to the WordNet: ")
+    rown.print_synset(synset_id)
+
     rown.save(os.path.join("rowordnet", "rowordnet.pickle"))
+
 
 def get_synset_relations(synset_id):
     synset = en_synsets[synset_id]
 
     all_relations = en_synset_relations(synset)
 
-    relations = list()
+    outbound_relations = list()
 
     for synset, relation in all_relations.items():
         if synset in rown.synsets():
-            relations.append((synset, relation))
+            outbound_relations.append((synset, relation))
 
-    return relations
+    inbound_relations = list()
+
+    # for out_synset_id, _ in outbound_relations:
+    #     out_synset_relations = en_synset_relations(en_synsets[out_synset_id])
+    #
+    #     for (out_rel_synset_id, out_rel_synset_rel) in out_synset_relations.items():
+    #         if out_rel_synset_id == synset_id:
+    #             inbound_relations.append((out_synset_id, out_rel_synset_rel))
+
+    for ro_synset_id in rown.synsets():
+        if ro_synset_id.startswith("ENG"):
+            out_synset_relations = en_synset_relations(en_synsets[ro_synset_id])
+
+        for (out_rel_synset_id, out_rel_synset_rel) in out_synset_relations.items():
+            if out_rel_synset_id == synset_id:
+                inbound_relations.append((ro_synset_id, out_rel_synset_rel))
+
+    return outbound_relations, inbound_relations
 
 
 def save_synsets():

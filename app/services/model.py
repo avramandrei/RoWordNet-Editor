@@ -11,7 +11,8 @@ class Synset():
         self.nonlexicalized = nonlexicalized
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        return "Synset:\n\t  id={}\n\t  nonlexicalized={}\n\t  stamp={}\n\t  definition={}". \
+                  format(self.id, self.nonlexicalized, self.stamp, self.definition)
 
     def serialize(self):
         return {
@@ -30,7 +31,7 @@ class Lemma:
         self.synset_id = synset_id
 
     def __repr__(self):
-        return '<id {}, name {}, sense {} synset_id {}>'.format(self.id, self.name, self.sense, self.synset_id)
+        return 'Literal(name {}, sense {})'.format(self.name, self.sense)
 
     def serialize(self):
         return {
@@ -78,4 +79,6 @@ try:
 except FileNotFoundError:
     users = []
 
+print("Requested synsets: {}".format([synset.id for synset in req_synsets]))
+print("Requested lemmas: {}".format([(lemma.name, lemma.sense) for lemma in req_lemmas]))
 

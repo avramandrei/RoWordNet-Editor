@@ -332,13 +332,13 @@ class RoWordNet(object):
 
         outbound_relations = self.outbound_relations(synset_id)
         print("\t  Outbound relations: ")
-        for synset_id, relation in outbound_relations:
-            print("\t\t  {} - {}".format(synset_id, relation))
+        for out_synset_id, relation in outbound_relations:
+            print("\t\t  {} - {}".format(out_synset_id, relation))
 
         inbound_relations = self.inbound_relations(synset_id)
         print("\t  Inbound relations: ")
-        for synset_id, relation in inbound_relations:
-            print("\t\t  {} - {}".format(synset_id, relation))
+        for in_synset_id, relation in inbound_relations:
+            print("\t\t  {} - {}".format(in_synset_id, relation))
 
     def synset_exists(self, synset: Synset):
         if not isinstance(synset, Synset):
@@ -373,7 +373,7 @@ class RoWordNet(object):
         inbound_relations = []
         for synset_id_iter in self._graph.adj.keys():
             for adj_synset_id, data in self._graph.adj[synset_id_iter].items():
-                if adj_synset_id == synset_id:
+                if adj_synset_id == synset_id and synset_id_iter != synset_id:
                     inbound_relations.append((synset_id_iter, data['label']))
 
         return inbound_relations

@@ -1,6 +1,7 @@
 from app import app, rown, en_synsets
 from flask import render_template, send_file
-from app.services.synsets import get_leaf_synsets, remove_requested_synsets, add_synset_to_rowordnet, get_synset_relations, save_synsets, save_lemmas
+from app.services.synsets import get_leaf_synsets, remove_requested_synsets, add_synset_to_rowordnet, get_synset_relations, \
+    save_synsets, save_lemmas, remove_lemmas_from_req_lemmas
 from flask import request, redirect, url_for
 from app.services.model import users, req_synsets, req_lemmas, Synset, Lemma
 import flask
@@ -59,6 +60,7 @@ def create_synset():
         req_synsets.append(synset)
         save_synsets()
 
+        new_lemmas = []
         if not nonlexicalized:
             lemma_counter = int(request.form.get("lemma_counter"))
 
@@ -66,10 +68,20 @@ def create_synset():
                 lemma_name = request.form.get("lemma_" + str(lemma_id) + "_name")
                 lemma_sense = request.form.get("lemma_" + str(lemma_id) + "_sense")
 
+                if lemma_name == "" or lemma_sense == "":
+                    continue
+
                 lemma = Lemma(id=req_lemmas[-1].id if len(req_lemmas) > 0 else 0,
                               name=lemma_name, sense=lemma_sense, synset_id=synset_id)
+
+                new_lemmas.append(lemma)
                 req_lemmas.append(lemma)
-                save_lemmas()
+
+        save_lemmas()
+
+        print("New synset added to the requested synsets")
+        print(synset)
+        print("Literals: {}".format([(lemma.name, lemma.sense) if lemma.synset_id == synset_id else "" for lemma in new_lemmas]))
 
         return redirect(url_for('leaf_synsets'))
 
@@ -148,13 +160,14 @@ def reject_requested_synset():
     for req_synset in req_synsets:
         if req_synset.id == synset_id:
             req_synsets.remove(req_synset)
+            print("Synset rejected: ")
+            print(req_synset)
             break
 
-    for req_lemma in req_lemmas:
-        if req_lemma.synset_id == synset_id:
-            req_lemmas.remove(req_lemma)
-
     save_synsets()
+
+    remove_lemmas_from_req_lemmas(synset_id)
+
     save_lemmas()
 
     return render_template("requested_synsets.html", requested_synsets=req_synsets,
@@ -200,9 +213,7 @@ def edit_requested_synset():
                 synset.nonlexicalized = nonlexicalized
                 synset.stamp = stamp
 
-        for lemma in req_lemmas:
-            if synset_id == lemma.synset_id:
-                req_lemmas.remove(lemma)
+        remove_lemmas_from_req_lemmas(synset_id)
 
         for i in range(int(lemma_counter)):
             name = request.form.get("lemma_{}_name".format(i))
