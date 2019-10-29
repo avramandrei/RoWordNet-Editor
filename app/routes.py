@@ -71,8 +71,7 @@ def create_synset():
                 if lemma_name == "" or lemma_sense == "":
                     continue
 
-                lemma = Lemma(id=req_lemmas[-1].id if len(req_lemmas) > 0 else 0,
-                              name=lemma_name, sense=lemma_sense, synset_id=synset_id)
+                lemma = Lemma(name=lemma_name, sense=lemma_sense, synset_id=synset_id)
 
                 new_lemmas.append(lemma)
                 req_lemmas.append(lemma)
@@ -218,23 +217,11 @@ def edit_requested_synset():
         for i in range(int(lemma_counter)):
             name = request.form.get("lemma_{}_name".format(i))
             sense = request.form.get("lemma_{}_sense".format(i))
-            lemma = Lemma(id=0, name=name, sense=sense, synset_id=synset_id)
+            lemma = Lemma(name=name, sense=sense, synset_id=synset_id)
 
             req_lemmas.append(lemma)
 
         add_synset_to_rowordnet(synset_id)
-
-        if not nonlexicalized:
-            lemma_counter = int(request.form.get("lemma_counter"))
-
-            for lemma_id in range(lemma_counter):
-                lemma_name = request.form.get("lemma_" + str(lemma_id) + "_name")
-                lemma_sense = request.form.get("lemma_" + str(lemma_id) + "_sense")
-
-                lemma = Lemma(id=req_lemmas[-1].id if len(req_lemmas) > 0 else 0,
-                              name=lemma_name, sense=lemma_sense, synset_id=synset_id)
-                req_lemmas.append(lemma)
-                save_lemmas()
 
         return redirect(url_for('requested_synsets'))
 

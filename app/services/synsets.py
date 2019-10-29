@@ -121,6 +121,8 @@ def add_synset_to_rowordnet(synset_id):
 
     rown.save(os.path.join("rowordnet", "rowordnet.pickle"))
 
+    ro_synsets[synset_id] = rown_synset
+
 
 def get_synset_relations(synset_id):
     synset = en_synsets[synset_id]

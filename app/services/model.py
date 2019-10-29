@@ -24,7 +24,7 @@ class Synset():
 
 
 class Lemma:
-    def __init__(self, id, name, sense, synset_id):
+    def __init__(self, name, sense, synset_id):
         self.id = id
         self.name = name
         self.sense = sense
@@ -35,7 +35,6 @@ class Lemma:
 
     def serialize(self):
         return {
-            'id': self.id,
             'name': self.name,
             'sense': self.sense,
             'synset_id': self.synset_id,
