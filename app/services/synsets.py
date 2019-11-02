@@ -5,6 +5,8 @@ from rowordnet.synset import Synset as RoWNSynset
 from app.utils import pos_dict
 import os
 import pickle
+import flask_login
+from app.services.model import users
 
 
 def get_leaf_synsets():
@@ -163,3 +165,37 @@ def save_synsets():
 def save_lemmas():
     with open(os.path.join("app", "resources", "lemmas.pickle"), "wb") as file:
         pickle.dump(req_lemmas, file)
+
+
+def lemmas_exists(request):
+    synsets_id = rown.synsets()
+
+    for synset_id in synsets_id:
+        synset = rown.synset(synset_id)
+
+        for lemma, sense in zip(synset.literals, synset.literals_senses):
+            lemma_counter = int(request.form.get("lemma_counter"))
+
+            for lemma_id in range(lemma_counter):
+                req_lemma = request.form.get("lemma_" + str(lemma_id) + "_name")
+                req_sense = request.form.get("lemma_" + str(lemma_id) + "_sense")
+
+                if req_lemma == lemma and req_sense == sense and ("x" in sense or "c" in sense):
+                    return True, req_lemma, req_sense
+
+    return False, None, None
+
+
+def get_synset_general_info(synset_id):
+    user_id = flask_login.current_user.get_id()
+
+    for user in users:
+        if user.id == user_id:
+            firstname = user.firstname
+            lastname = user.lastname
+
+    en_definition = en_synsets[synset_id].definition()
+    en_lemmas = [(lemma.name(), en_synsets[synset_id].name().split(".")[2]) for lemma in en_synsets[synset_id].lemmas()]
+
+    return firstname + " " + lastname, en_definition, en_lemmas
+

@@ -29,7 +29,7 @@
 
             <li>
                 <label>Definition<span class="required">*</span></label>
-                <textarea name="definition" id="definition" class="field-long field-textarea">{{definition}}</textarea>
+                <textarea name="definition" id="definition" class="field-long field-textarea" oninput="hasDefinition()">{{definition}}</textarea>
             </li>
 
             <li>
@@ -51,6 +51,12 @@
 
                 <button id="addLemma" onclick="addLemmaFcn()" type="button">Add Lemma</button>
                 <button id="removeLemma" onclick="removeLemmaFcn()" type="button">Remove Lemma</button>
+
+                <br><br>
+
+                {% if error %}
+                    <p>{{error_message}}</p>
+                {% endif %}
             </li>
 
             {% for (name, sense) in lemmas %}

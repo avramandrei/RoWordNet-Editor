@@ -1,7 +1,7 @@
 from app import app, rown, en_synsets
 from flask import render_template, send_file
 from app.services.synsets import get_leaf_synsets, remove_requested_synsets, add_synset_to_rowordnet, get_synset_relations, \
-    save_synsets, save_lemmas, remove_lemmas_from_req_lemmas
+    save_synsets, save_lemmas, remove_lemmas_from_req_lemmas, lemmas_exists, get_synset_general_info
 from flask import request, redirect, url_for
 from app.services.model import users, req_synsets, req_lemmas, Synset, Lemma
 import flask
@@ -33,20 +33,11 @@ def leaf_synsets():
 def create_synset():
     if request.method == "GET":
         synset_id = request.args.get('synset_id')
-
-        user_id = flask_login.current_user.get_id()
-
-        for user in users:
-            if user.id == user_id:
-                firstname = user.firstname
-                lastname = user.lastname
-
-        en_definition = en_synsets[synset_id].definition()
-        en_lemmas = [(lemma.name(), en_synsets[synset_id].name().split(".")[2]) for lemma in en_synsets[synset_id].lemmas()]
+        stamp, en_definition, en_lemmas = get_synset_general_info(synset_id)
 
         return render_template("create_synset.html",
                                synset_id=synset_id,
-                               stamp=lastname + " " + firstname,
+                               stamp=stamp,
                                en_definition=en_definition,
                                en_lemmas=en_lemmas
                                )
@@ -56,9 +47,22 @@ def create_synset():
         nonlexicalized = False if request.form.get("nonlexicalized") is None else True
         stamp = request.form.get("stamp")
 
+        lemma_exists, lemma, sense = lemmas_exists(request)
+        if lemma_exists:
+            stamp, en_definition, en_lemmas = get_synset_general_info(synset_id)
+
+            return render_template("create_synset.html",
+                                   synset_id=synset_id,
+                                   stamp=stamp,
+                                   en_definition=en_definition,
+                                   en_lemmas=en_lemmas,
+                                   definition=definition,
+                                   error=True,
+                                   error_message="Lemmas declined! Lemma '{}' with sense '{}' already exists in RoWordNet.".
+                                             format(lemma, sense)
+                                   )
+
         synset = Synset(id=synset_id, definition=definition, nonlexicalized=nonlexicalized, stamp=stamp)
-        req_synsets.append(synset)
-        save_synsets()
 
         new_lemmas = []
         if not nonlexicalized:
@@ -68,14 +72,13 @@ def create_synset():
                 lemma_name = request.form.get("lemma_" + str(lemma_id) + "_name")
                 lemma_sense = request.form.get("lemma_" + str(lemma_id) + "_sense")
 
-                if lemma_name == "" or lemma_sense == "":
-                    continue
-
                 lemma = Lemma(name=lemma_name, sense=lemma_sense, synset_id=synset_id)
 
                 new_lemmas.append(lemma)
                 req_lemmas.append(lemma)
 
+        req_synsets.append(synset)
+        save_synsets()
         save_lemmas()
 
         print("New synset added to the requested synsets")
@@ -187,7 +190,6 @@ def edit_requested_synset():
                 stamp = synset.stamp
 
         lemmas = []
-
         for lemma in req_lemmas:
             if lemma.synset_id == synset_id:
                 lemmas.append((lemma.name, lemma.sense))
@@ -205,6 +207,23 @@ def edit_requested_synset():
         nonlexicalized = False if request.form.get("nonlexicalized") is None else True
         stamp = request.form.get("stamp")
         lemma_counter = request.form.get("lemma_counter")
+
+        lemma_exists, lemma, sense = lemmas_exists(request)
+        if lemma_exists:
+            stamp, en_definition, en_lemmas = get_synset_general_info(synset_id)
+
+            lemmas = []
+            for req_lemma in req_lemmas:
+                if req_lemma.synset_id == synset_id:
+                    lemmas.append((req_lemma.name, req_lemma.sense))
+
+            return render_template("edit_synset.html", synset_id=synset_id, definition=definition,
+                                   nonlexicalized=nonlexicalized, stamp=stamp, lemmas=lemmas,
+                                   en_definition=en_definition,
+                                   en_lemmas=en_lemmas,
+                                   error=True,
+                                   error_message="Lemmas declined! Lemma '{}' with sense '{}' already exists in RoWordNet.".
+                                             format(lemma, sense))
 
         for synset in req_synsets:
             if synset.id == synset_id:
