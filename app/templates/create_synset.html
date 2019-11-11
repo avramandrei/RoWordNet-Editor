@@ -24,13 +24,19 @@
                 <input type="hidden" name="lemma_counter" id="lemmaCounter" value="0">
 
                 <li>
+                    {% if error %}
+                        <font color="red"><p>{{error_message}}</p></font>
+                    {% endif %}
+
+                    <br>
+
                     <label>Synset id<span class="required">*</span></label>
-                    <input type="text" name="synset_id" value="{{synset_id}}" class="field-long">
+                    <input type="text" name="synset_id" value="{{synset_id}}" class="field-long" readonly>
                 </li>
 
                 <li>
                     <label>Definition<span class="required">*</span></label>
-                    <textarea name="definition" id="definition" class="field-long field-textarea" oninput="hasDefinition()">{{definition}}</textarea>
+                    <textarea name="definition" id="definition" class="field-long field-textarea">{{definition}}</textarea>
                 </li>
 
                 <li>
@@ -40,7 +46,7 @@
 
                 <li>
                     <label>Stamp<span class="required">*</span></label>
-                    <input type="text" name="stamp" value="{{stamp}}" class="field-long">
+                    <input type="text" name="stamp" value="{{stamp}}" class="field-long" readonly>
                 </li>
 
                 <li>
@@ -49,13 +55,9 @@
                     <button id="removeLemma" onclick="removeLemmaFcn()" type="button">Remove Lemma</button>
 
                     <br>
-
-                    {% if error %}
-                        <p>{{error_message}}</p>
-                    {% endif %}
                 </li>
 
-                <li><input type='submit' name='submit' value="Create synset" id="submit"/></li>
+                <li><input type='submit' name='submit' value="Create synset" onclick="onSubmit()"/></li>
             </ul>
         </form>
 

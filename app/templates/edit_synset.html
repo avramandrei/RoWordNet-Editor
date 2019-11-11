@@ -23,13 +23,19 @@
             <input type="hidden" name="lemma_counter" id="lemmaCounter" value="{{lemmas|length}}">
 
             <li>
+                {% if error %}
+                    <font color="red"><p>{{error_message}}</p></font>
+                {% endif %}
+
+                <br>
+
                 <label>Synset id<span class="required">*</span></label>
-                <input type="text" name="synset_id" value="{{synset_id}}" class="field-long">
+                <input type="text" name="synset_id" value="{{synset_id}}" class="field-long" readonly>
             </li>
 
             <li>
                 <label>Definition<span class="required">*</span></label>
-                <textarea name="definition" id="definition" class="field-long field-textarea" oninput="hasDefinition()">{{definition}}</textarea>
+                <textarea name="definition" id="definition" class="field-long field-textarea">{{definition}}</textarea>
             </li>
 
             <li>
@@ -43,7 +49,7 @@
 
             <li>
                 <label>Stamp<span class="required">*</span></label>
-                <input type="text" name="stamp" value="{{stamp}}" class="field-long">
+                <input type="text" name="stamp" value="{{stamp}}" class="field-long" readonly>
             </li>
 
             <li>
@@ -51,12 +57,6 @@
 
                 <button id="addLemma" onclick="addLemmaFcn()" type="button">Add Lemma</button>
                 <button id="removeLemma" onclick="removeLemmaFcn()" type="button">Remove Lemma</button>
-
-                <br><br>
-
-                {% if error %}
-                    <p>{{error_message}}</p>
-                {% endif %}
             </li>
 
             {% for (name, sense) in lemmas %}
@@ -66,7 +66,7 @@
                 </li>
             {% endfor %}
 
-            <li><input type='submit' name='submit' value="Save synset"/></li>
+            <li><input type='submit' name='submit' value="Save synset" id="submit" onclick="onSubmit()"/></li>
         </ul>
     </form>
 {% endblock %}

@@ -8,22 +8,10 @@ window.onload = function() {
     isLexicalized();
 }
 
-
-function hasDefinition() {
-    var definition = document.getElementById("definition");
+function onSubmit() {
     var checkBox = document.getElementById("nonlexicalized");
-
-    if(definition.value == "" && checkBox.checked == true) {
-        window.alert("A nonlexicalized synset must have a definition!")
-        checkBox.checked = false;
-
-        var plusLemma = document.getElementById("addLemma");
-        var minusLemma = document.getElementById("removeLemma");
-
-        plusLemma.disabled = false;
-        minusLemma.disabled = false;
-
-        return;
+    if(checkBox.checked == true) {
+        document.getElementById("lemmaCounter").value = 0;
     }
 }
 
@@ -32,11 +20,6 @@ function isLexicalized() {
     var checkBox = document.getElementById("nonlexicalized");
     if(checkBox.checked == true) {
         var definition = document.getElementById("definition");
-        if (definition.value == "") {
-            window.alert("A nonlexicalized synset must have a definition!")
-            checkBox.checked = false;
-            return;
-        }
 
         // deactivate the buttons
         var plusLemma = document.getElementById("addLemma");

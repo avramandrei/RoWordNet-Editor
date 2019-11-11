@@ -180,7 +180,7 @@ def lemmas_exists(request):
                 req_lemma = request.form.get("lemma_" + str(lemma_id) + "_name")
                 req_sense = request.form.get("lemma_" + str(lemma_id) + "_sense")
 
-                if req_lemma == lemma and req_sense == sense and ("x" in sense or "c" in sense):
+                if req_lemma == lemma and req_sense == sense and not ("x" in sense or "c" in sense):
                     return True, req_lemma, req_sense
 
     return False, None, None
@@ -199,3 +199,15 @@ def get_synset_general_info(synset_id):
 
     return firstname + " " + lastname, en_definition, en_lemmas
 
+
+def lemmas_invalid(request):
+    lemma_counter = int(request.form.get("lemma_counter"))
+
+    for lemma_id in range(lemma_counter):
+        req_lemma = request.form.get("lemma_" + str(lemma_id) + "_name")
+        req_sense = request.form.get("lemma_" + str(lemma_id) + "_sense")
+
+        if req_lemma is "" or req_sense is "":
+            return True, req_lemma, req_sense
+
+    return False, None, None
