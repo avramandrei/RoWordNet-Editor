@@ -21,7 +21,7 @@
 
         <form action="create_synset" method="post">
             <ul class="form-style-1" id="create_synset_ul">
-                <input type="hidden" name="lemma_counter" id="lemmaCounter" value="0">
+                <input type="hidden" name="lemma_counter" id="lemmaCounter" value="{{lemmas|length}}">
 
                 <li>
                     {% if error %}
@@ -56,6 +56,13 @@
 
                     <br>
                 </li>
+
+                {% for (name, sense) in lemmas %}
+                    <li>
+                        <input type="text" name="lemma_{{loop.index0}}_name" id="lemma_{{loop.index0}}_name" value="{{name}}" class="field-divided">
+                        <input type="text" name="lemma_{{loop.index0}}_sense" id="lemma_{{loop.index0}}_sense" value="{{sense}}" class="field-divided">
+                    </li>
+                {% endfor %}
 
                 <li><input type='submit' name='submit' value="Create synset" onclick="onSubmit()"/></li>
             </ul>
