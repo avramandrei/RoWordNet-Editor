@@ -7,6 +7,7 @@ import os
 import pickle
 import flask_login
 from app.services.model import users
+from app.services.logging import log_message
 
 
 def get_leaf_synsets():
@@ -109,8 +110,8 @@ def add_synset_to_rowordnet(synset_id):
 
     outbound_relations, inbound_relations = get_synset_relations(synset_id)
 
-    print(outbound_relations)
-    print(inbound_relations)
+   # print(outbound_relations)
+   # print(inbound_relations)
 
     for rel_synset_id, relation in outbound_relations:
         rown.add_relation(synset.id, rel_synset_id, relation)
@@ -118,8 +119,8 @@ def add_synset_to_rowordnet(synset_id):
     for rel_synset_id, relation in inbound_relations:
         rown.add_relation(rel_synset_id, synset.id, relation)
 
-    print("New synset added to the WordNet: ")
-    rown.print_synset(synset_id)
+    log_message("New synset added to the WordNet: ")
+    log_message(synset)
 
     rown.save(os.path.join("rowordnet", "rowordnet.pickle"))
 

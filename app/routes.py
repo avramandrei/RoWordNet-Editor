@@ -8,6 +8,7 @@ import flask
 import flask_login
 from app.services.acces_level import requires_access_level, access_levels
 import os
+from app.services.logging import log_message
 
 
 @app.route('/leaf_synsets')
@@ -34,6 +35,8 @@ def create_synset():
     if request.method == "GET":
         synset_id = request.args.get('synset_id')
         stamp, en_definition, en_lemmas = get_synset_general_info(synset_id)
+
+        log_message("Requested synset {}".format(synset_id))
 
         return render_template("create_synset.html",
                                synset_id=synset_id,
@@ -111,9 +114,9 @@ def create_synset():
                 if user.role == access_levels["admin"]:
                     add_synset_to_rowordnet(synset_id)
                 elif user.role == access_levels["user"]:
-                    print("New synset added to the requested synsets")
-                    print(synset)
-                    print("Literals: {}".format([(lemma.name, lemma.sense) if lemma.synset_id == synset_id else "" for lemma in new_lemmas]))
+                    log_message("New synset added to the requested synsets")
+                    log_message(synset)
+                    log_message("Literals: {}".format([(lemma.name, lemma.sense) if lemma.synset_id == synset_id else "" for lemma in new_lemmas]))
 
                 break
 
@@ -143,6 +146,8 @@ def login():
 
             user.is_authenticated = True
 
+            log_message("Logged in.")
+
             return flask.redirect(flask.url_for('leaf_synsets'))
         else:
             return render_template("login.html", invalid_credentials=True)
@@ -157,6 +162,8 @@ def logout():
     for user_it in users:
         if user_it.id == user_id:
             user = user_it
+
+    log_message("Logged out.")
 
     user.is_authenticated = False
 
@@ -181,6 +188,8 @@ def aceept_requested_synset():
 
     add_synset_to_rowordnet(synset_id)
 
+    log_message("Accept synset: {}".format(synset_id))
+
     return render_template("requested_synsets.html", requested_synsets=req_synsets,
                            requested_lemmas=req_lemmas)
 
@@ -194,8 +203,8 @@ def reject_requested_synset():
     for req_synset in req_synsets:
         if req_synset.id == synset_id:
             req_synsets.remove(req_synset)
-            print("Synset rejected: ")
-            print(req_synset)
+            log_message("Synset rejected: ")
+            log_message(req_synset)
             break
 
     save_synsets()
@@ -229,6 +238,8 @@ def edit_requested_synset():
         en_definition = en_synsets[synset_id].definition()
         en_lemmas = [(lemma.name(), en_synsets[synset_id].name().split(".")[2]) for lemma in
                      en_synsets[synset_id].lemmas()]
+
+        log_message("Edit synset: {} - {}. Lemmas: {}".format(synset_id, definition, lemmas))
 
         return render_template("edit_synset.html", synset_id=synset_id, definition=definition,
                                nonlexicalized=nonlexicalized, stamp=stamp, lemmas=lemmas, en_definition=en_definition,
@@ -301,6 +312,8 @@ def download_rowordnet():
     rown.save(os.path.join("rowordnet", "rowordnet.xml"), xml=True)
 
     rowordnet_path = os.path.join("..", "rowordnet", "rowordnet.xml")
+
+    log_message("Download rowordnet")
 
     return send_file(rowordnet_path, as_attachment=True)
 
