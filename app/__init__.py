@@ -1,6 +1,7 @@
 from flask import Flask
 from app.utils import en_synset_to_id
 import os
+import logging
 
 print()
 
@@ -17,7 +18,7 @@ en_synsets = {en_synset_to_id(synset): synset for synset in enwn.all_synsets()}
 app = Flask(__name__)
 
 app.secret_key = b'_2#yBL"A4A8k\no]/'
-
+logging.basicConfig(filename='info.log', level=logging.ERROR)
 
 from app.services.login import login_manager
 
