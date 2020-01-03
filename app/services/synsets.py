@@ -95,8 +95,9 @@ def add_synset_to_rowordnet(synset_id):
 
     save_synsets()
 
-    rown_synset = RoWNSynset(id=synset.id, pos=pos_dict[synset.id[-1]], nonlexicalized=synset.nonlexicalized,
+    rown_synset = RoWNSynset(id=synset.id, pos=synset.id[-1], nonlexicalized=synset.nonlexicalized,
                              stamp=synset.stamp, definition=synset.definition)
+    print(rown_synset.pos)
 
     for req_lemma in req_lemmas:
         if req_lemma.synset_id == synset_id:
@@ -122,7 +123,7 @@ def add_synset_to_rowordnet(synset_id):
     log_message("New synset added to the WordNet: ")
     log_message(synset)
 
-    rown.save(os.path.join("rowordnet", "rowordnet.pickle"))
+    rown.save(os.path.join("rowordnet", "rowordnet.xml"), xml=True)
 
     ro_synsets[synset_id] = rown_synset
 
