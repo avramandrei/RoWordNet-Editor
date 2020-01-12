@@ -9,6 +9,7 @@ import flask_login
 from app.services.acces_level import requires_access_level, access_levels
 import os
 from app.services.logging import log_message
+from rowordnet.synset import Synset as RoWNSynset
 
 
 @app.route('/leaf_synsets')
@@ -176,8 +177,21 @@ def logout():
 @flask_login.login_required
 @requires_access_level(access_levels["moderator"])
 def requested_synsets():
-    return render_template("requested_synsets.html", requested_synsets=req_synsets,
-                           requested_lemmas=req_lemmas)
+    en_synsets_list = []
+
+    for req_synset in req_synsets:
+        _, en_definition, en_lemmas = get_synset_general_info(req_synset.id)
+
+        en_synset = RoWNSynset(id=req_synset.id)
+        en_synset.definition = en_definition
+
+        for value, sense in en_lemmas:
+            en_synset.add_literal(value, sense)
+
+        en_synsets_list.append(en_synset)
+
+    return render_template("requested_synsets.html", requested_synsets=req_synsets, requested_lemmas=req_lemmas,
+                           en_synsets=en_synsets_list, zip=zip)
 
 
 @app.route('/requested_synsets/accept_synset')

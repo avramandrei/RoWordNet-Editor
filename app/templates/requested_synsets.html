@@ -12,14 +12,41 @@
                     <h2>{{synset.id}}</h2>
                 </div>
 
-                <p><strong>Definition: </strong></p>
+                {% for en_synset in en_synsets %}
+                    {% if en_synset.id == synset.id %}
+                        <p><strong>English Definition: </strong></p>
+
+                        <ul>
+                            <li>{{en_synset.definition}}</li>
+                        </ul>
+
+                        {% if not synset.nonlexicalized %}
+
+                            <strong>English Lemmas:</strong> <br><br>
+
+                            <ul>
+                                {% for literal, sense in zip(en_synset.literals, en_synset.literals_senses) %}
+                                    <li>
+                                        {{literal}} - {{sense}}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                        {% endif %}
+
+                    {% endif %}
+                {% endfor %}
+
+                <hr>
+
+                <p><strong>Requested Definition: </strong></p>
                 <ul>
                     <li>{{synset.definition}}</li>
                 </ul>
 
                 {% if not synset.nonlexicalized %}
 
-                    <strong>Lemmas:</strong> <br><br>
+                    <strong>Requested Lemmas:</strong> <br><br>
                    <ul>
                         {% for lemma in requested_lemmas %}
                             {% if lemma.synset_id == synset.id %}
