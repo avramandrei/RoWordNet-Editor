@@ -38,3 +38,21 @@ python3 add_user.py [username] [password] [role] [--firstname] [--lastname]
 | --firstname | str | no | Firstname of the user. Default: `""`. | 
 | --lastname | str | no | Lastname of the user. Default: `""`. |
 
+## Cite
+
+If you are using this repository, please cite the following [paper](https://academiaromana.ro/sectii2002/proceedings/doc2020-4/11-Avram_Tufis.pdf) as a thank you to the authors:
+
+```
+Avram, A.M. and Mititelu, V.B., A Customizable WordNet Editor. In Fourth International Conference Computational Linguistics in Bulgaria (p. 147).
+```
+
+or in BibTeX format:
+
+```
+@inproceedings{avramcustomizable,
+  title={A Customizable WordNet Editor},
+  author={Avram, Andrei-Marius and Mititelu, Verginica Barbu},
+  booktitle={Fourth International Conference Computational Linguistics in Bulgaria},
+  pages={147}
+}
+```
